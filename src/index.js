@@ -3,6 +3,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import bodyParser from "body-parser";
 
+import helloRouter from "./routes/hello";
+
 // express 서버 객체 생성
 const app = express();
 
@@ -13,6 +15,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 
 // router setting
+app.use("/", helloRouter);
 
 const PORT = 4000; // 서버 PORT 지정
 
