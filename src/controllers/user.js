@@ -1,22 +1,25 @@
 import User from "../models/user";
+import { createHashedPassword } from "../lib/auth";
 
 export const joinUser = async (req, res) => {
   try {
     const { email, password, name, age } = req.body;
 
+    const checkEmail = await User.findOne({
+      email,
+    });
+
+    if (checkEmail) throw new Error("email already exists");
+
+    const { hashedPassword, salt } = await createHashedPassword(password);
+
     const data = new User({
       email,
-      password,
-      salt: "123",
+      password: hashedPassword,
+      salt,
       name,
       age,
     });
-
-    // RDB
-    // SELECT => 조회
-    // INSERT => 삽입
-    // UPDATE => 수정
-    // DELETE => 삭제
 
     await data.save(); // User Schema Insert(삽입)하는 과정
 
