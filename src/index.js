@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 
-import helloRouter from "./routes/hello";
+import userRouter from "./routes/user";
 
 require("dotenv").config();
 
@@ -31,7 +31,7 @@ app.use(morgan("dev"));
 app.use(cors());
 
 // router setting
-app.use("/", helloRouter);
+app.use("/user", userRouter);
 
 const handleListening = () =>
   console.log(`Listening on: http://localhost:${process.env.PORT}`);
