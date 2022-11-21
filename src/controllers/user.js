@@ -1,5 +1,7 @@
+import jwt from "jsonwebtoken";
+
 import User from "../models/user";
-import { createHashedPassword } from "../lib/auth";
+import { createHashedPassword, verifyPassword } from "../lib/auth";
 
 export const joinUser = async (req, res) => {
   try {
@@ -27,6 +29,44 @@ export const joinUser = async (req, res) => {
       success: true,
       message: null,
       data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+      data: null,
+    });
+  }
+};
+
+export const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 존재하는 유저인지 체크
+    const user = await User.findOne({ email });
+    if (!user) throw new Error("User not found");
+
+    // 비밀번호 맞는지 체크
+    const verified = await verifyPassword(password, user.salt, user.password);
+    if (!verified) throw new Error("Password does not match");
+
+    // 토큰 발행 (JWT)
+    const payload = {
+      email: user.email,
+    };
+
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, {
+      algorithm: "HS256",
+      expiresIn: "1d",
+    });
+
+    res.send({
+      success: true,
+      message: null,
+      data: {
+        accessToken,
+      },
     });
   } catch (e) {
     res.send({
