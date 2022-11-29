@@ -6,6 +6,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 
 import userRouter from "./routes/user";
+import boardRouter from "./routes/board";
 
 require("dotenv").config();
 
@@ -32,6 +33,7 @@ app.use(cors());
 
 // router setting
 app.use("/user", userRouter);
+app.use("/board", boardRouter);
 
 const handleListening = () =>
   console.log(`Listening on: http://localhost:${process.env.PORT}`);
