@@ -50,3 +50,28 @@ export const getBoardList = async (req, res) => {
     });
   }
 };
+
+export const getBoard = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await Board.findById({ _id: id });
+
+    const { user } = res.locals;
+    const isMyBoard = user._id.toString() === data.userId.toString();
+
+    res.send({
+      success: true,
+      message: null,
+      data: {
+        ...data._doc,
+        isMyBoard,
+      },
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+      data: null,
+    });
+  }
+};
