@@ -102,3 +102,36 @@ export const deleteBoard = async (req, res) => {
     });
   }
 };
+
+export const patchBoard = async (req, res) => {
+  try {
+    const { id, title, content } = req.body;
+    const { user } = res.locals;
+
+    const findBoard = await Board.findById({ _id: id });
+    if (!findBoard) throw new Error("Board not found");
+
+    if (user._id.toString() !== findBoard.userId.toString())
+      throw new Error("Invalid user");
+
+    const data = await Board.findByIdAndUpdate(
+      { _id: id },
+      {
+        title,
+        content,
+      }
+    );
+
+    res.send({
+      success: true,
+      message: null,
+      data,
+    });
+  } catch (e) {
+    res.send({
+      success: false,
+      message: e.message,
+      data: null,
+    });
+  }
+};
